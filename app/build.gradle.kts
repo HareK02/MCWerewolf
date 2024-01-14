@@ -3,17 +3,23 @@ import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 group = "net.hareworks"
 version = "1.0"
 
-
 bukkit {
     main = "net.hareworks.werewolf.App"
     name = "werewolf"
     description = "just server command to send player to bungee server"
     version = getVersion().toString()
+		apiVersion = "1.20"
     authors =
             listOf(
                 "Hare-K02",
             )
     commands {
+				register("wbook") {
+						description = "get book"
+						usage = "/wbook"
+						permission = "werewolf.player"
+						permissionMessage = "You don't have permission to run this command"
+				}
         register("werewolf") {
             description = "Manage the game"
             usage = "/werewolf <subcommand>"
@@ -24,8 +30,12 @@ bukkit {
     permissions {
         register("werewolf.gamemaster") {
             description = "allow player to use gamemaster command"
-            default = BukkitPluginDescription.Permission.Default.FALSE // TRUE, FALSE, OP or NOT_OP
+            default = BukkitPluginDescription.Permission.Default.TRUE // TRUE, FALSE, OP or NOT_OP
         }
+				register("werewolf.player") {
+						description = "allow player to use player command"
+						default = BukkitPluginDescription.Permission.Default.TRUE // TRUE, FALSE, OP or NOT_OP
+				}
 		}
 }
 
@@ -41,6 +51,7 @@ repositories {
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    implementation("net.kyori:adventure-api:4.14.0")
 }
 tasks {
     shadowJar {
