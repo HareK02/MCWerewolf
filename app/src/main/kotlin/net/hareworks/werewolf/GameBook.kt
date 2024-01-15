@@ -47,14 +47,15 @@ private fun roomlist(): Item {
   var linenum = 1
   var roomlist = Component.text("RoomList:\n", TextColor.color(0x000000))
   for (room in App.plugin.rooms) {
-    roomlist = roomlist.append(Component.text(room.roomname + "\n", TextColor.color(0x000000)))
+    roomlist = roomlist.append(Component.text(" ■ " + room.roomname + "\n", TextColor.color(0x000000)))
     linenum++
   }
   return Item(linenum, roomlist)
 }
 
 fun GameBook(player: Player): Boolean {
-  if (!App.plugin.hasRoom(player)) { // GameMenu
+  // if (!App.plugin.hasRoom(player)) { // GameMenu
+		if (true) {
     var roomlist = roomlist()
     openBook(
         player,
@@ -67,20 +68,6 @@ fun GameBook(player: Player): Boolean {
         )
     )
   } else { // RoomMenu
-    openBook(
-        player,
-        listOf(
-            Component.text("---", TextColor.color(0xd3d3d3))
-                .append(
-                    Component.text("  MC Werewolf  ", TextColor.color(0x696969))
-                        .decoration(TextDecoration.STRIKETHROUGH, false)
-                        .decoration(TextDecoration.BOLD, false)
-                )
-                .append(Component.text("---\n"))
-                .append(Component.text("Room: ", TextColor.color(0x696969)))
-                .append(Component.text("RoomName\n", TextColor.color(0x000000)))
-        )
-    )
   }
   return true
 }

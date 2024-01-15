@@ -3,9 +3,6 @@ package net.hareworks.werewolf
 import org.bukkit.entity.Player
 
 public class Game {
-  init {
-    App.plugin.rooms.add(this)
-  }
   var roomname: String = ""
   constructor(creator: Player, name: String) {
     this.players.add(creator)

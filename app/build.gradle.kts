@@ -1,5 +1,6 @@
 import net.minecrell.pluginyml.bukkit.BukkitPluginDescription
 
+
 group = "net.hareworks"
 version = "1.0"
 
@@ -50,7 +51,7 @@ repositories {
 }
 dependencies {
     compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
+    compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
     implementation("net.kyori:adventure-api:4.14.0")
 }
 tasks {
