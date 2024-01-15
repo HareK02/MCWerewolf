@@ -1,73 +1,62 @@
 package net.hareworks.werewolf
 
+import net.hareworks.werewolf.book.BookBase
+import net.hareworks.werewolf.book.Element
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.event.ClickEvent
 import net.kyori.adventure.text.format.TextColor
-import net.kyori.adventure.text.format.TextDecoration
-import org.bukkit.entity.Player
 
-private class Item {
-  var linenum: Int = 0
-  var body: Component = Component.text("body")
-  constructor(linenum: Int, body: Component) {
-    this.linenum = linenum
-    this.body = body
+object GameBook : BookBase() {
+  override val baseColor1: TextColor = TextColor.color(0x000000)
+  override val baseColor2: TextColor = TextColor.color(0x000000)
+  override val conceptColor: TextColor = TextColor.color(0x000000)
+
+  private fun roomlist(lineRange: Int): Element {
+    var linenum = 2
+    var page: Int = 0
+    if (App.plugin.rooms.size > lineRange) {
+      page = App.plugin.rooms.size / lineRange
+    }
+    var component =
+        Component.text("Rooms   ", TextColor.color(0x000000))
+            .append(Component.text("[Create room]\n", TextColor.color(0x000000)))
+
+    val list = App.plugin.rooms.subList(page * lineRange, App.plugin.rooms.size % lineRange)
+    if (list.isEmpty()) {
+      component =
+          component.append(Component.text("\n        No rooms.\n", TextColor.color(0x000000)))
+      linenum += 2
+    }
+    for (room in list) {
+      val state = Component.text(" □ ", TextColor.color(0x696969))
+      component =
+          component
+              .append(state)
+              .append(
+                  Component.text(room.roomname, TextColor.color(0x111111))
+                      .hoverEvent(
+                          Component.text("Click to join the room.", TextColor.color(0x111111))
+                      )
+                      .clickEvent(ClickEvent.runCommand("/werewolf join " + room.roomname))
+              )
+              .append(Component.text("\n"))
+      linenum++
+    }
+    val pageControl =
+        BookBase.space(lineRange - linenum)
+            .append(Component.text("          "))
+            .append(Component.text(" < ", TextColor.color(0x000000)))
+            .clickEvent(ClickEvent.runCommand("/werewolf roomlist " + (page - 1)))
+            .append(Component.text((page + 1).toString(), TextColor.color(0x000000)))
+            .append(
+                Component.text(" > \n", TextColor.color(0x000000))
+                    .clickEvent(ClickEvent.runCommand("/werewolf roomlist " + (page + 1)))
+            )
+    return Element(lineRange, component.append(pageControl))
   }
-}
 
-private val MAXLINE = 14
-private val separator: Component =
-    Component.text("---------------\n")
-        .decoration(TextDecoration.STRIKETHROUGH, true)
-        .decoration(TextDecoration.BOLD, true)
-private val title: Component =
-    Component.text("---", TextColor.color(0xd3d3d3))
-        .append(
-            Component.text("  MC Werewolf  ", TextColor.color(0x696969))
-                .decoration(TextDecoration.STRIKETHROUGH, false)
-                .decoration(TextDecoration.BOLD, false)
-        )
-        .append(Component.text("---\n"))
-private val footer: Component =
-    Component.text("            ")
-        .decoration(TextDecoration.STRIKETHROUGH, false)
-        .decoration(TextDecoration.BOLD, false)
-        .append(Component.text("Wiki", TextColor.color(0x696969)))
-        .append(Component.text(" | "))
-        .append(Component.text("GitHub", TextColor.color(0x696969)))
-
-private fun space(line: Int): Item {
-  var body = Component.text("")
-  for (i in 0..line - 1) {
-    body = body.append(Component.text("\n"))
+  override fun content(): MutableList<Element> {
+    var content: MutableList<Element> = mutableListOf(roomlist(BookBase.MAXLINE))
+    return content
   }
-  return Item(line, body)
-}
-
-private fun roomlist(): Item {
-  var linenum = 1
-  var roomlist = Component.text("RoomList:\n", TextColor.color(0x000000))
-  for (room in App.plugin.rooms) {
-    roomlist = roomlist.append(Component.text(" ■ " + room.roomname + "\n", TextColor.color(0x000000)))
-    linenum++
-  }
-  return Item(linenum, roomlist)
-}
-
-fun GameBook(player: Player): Boolean {
-  // if (!App.plugin.hasRoom(player)) { // GameMenu
-		if (true) {
-    var roomlist = roomlist()
-    openBook(
-        player,
-        listOf(
-            title
-                .append(roomlist.body)
-                .append(space(MAXLINE - 3 - roomlist.linenum).body)
-                .append(separator)
-                .append(footer)
-        )
-    )
-  } else { // RoomMenu
-  }
-  return true
 }
