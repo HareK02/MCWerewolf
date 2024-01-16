@@ -1,9 +1,9 @@
 package net.hareworks.werewolf.game
 
 public enum class Team {
-	Villager,
+	Citizen,
 	Werewolf,
-	Neutral
+	ThirdCamp,
 }
 
 abstract class Role {

@@ -7,7 +7,7 @@ version = "1.0"
 bukkit {
     main = "net.hareworks.werewolf.App"
     name = "werewolf"
-    description = "just server command to send player to bungee server"
+    description = "minecraft werewolf game plugin"
     version = getVersion().toString()
 		apiVersion = "1.20"
     authors =
@@ -16,7 +16,7 @@ bukkit {
             )
     commands {
 				register("wbook") {
-						description = "get book"
+						description = "open and operate book"
 						usage = "/wbook"
 						permission = "werewolf.player"
 						permissionMessage = "You don't have permission to run this command"
