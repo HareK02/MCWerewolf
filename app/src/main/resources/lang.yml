@@ -1,3 +1,17 @@
-wbook:
-  test: "test dayo !"
-  fallback_test: "fallback_test dayo !"
+command:
+    must_be_player: "You must be a player to use this command."
+    invalid_argument: "Invalid arguments."
+    wbook:
+      help: "§2aaaa"
+    werewolf:
+      help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
+      already_joined: "You are already in a room."
+      room_name_exists: "Room name already exists."
+      created: "Room created."
+      not_found: "Room not found."
+      room_full: "Room is full."
+      joined: "You joined the room."
+      not_in_room: "You are not in a room."
+      left: "You left the room."
+      disbanded_by_no_player: "Room disbanded because there is no player."
+      room_not_found: "Room not found."

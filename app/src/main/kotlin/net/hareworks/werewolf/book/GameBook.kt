@@ -1,10 +1,10 @@
 package net.hareworks.werewolf.book
 
+import net.hareworks.werewolf.MCWerewolf
 import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
-import net.hareworks.werewolf.App
 import org.bukkit.entity.Player
 
 public class Element {
@@ -14,9 +14,7 @@ public class Element {
     this.linenum = linenum
     this.body = body
   }
-}
-
-public val MAXLINE: Int = 11
+} 
 
 abstract class GameBook {
   companion object {
@@ -27,6 +25,8 @@ abstract class GameBook {
       }
       return body
     }
+
+    const val MAXLINE: Int = 11
   }
 
   private var linenum: Int = 0
@@ -44,13 +44,13 @@ abstract class GameBook {
                   )
               )
               .append(title)
-			for (elem in comp) {
-				page = page.append(elem.body)
-				line += elem.linenum
-				if (line >= MAXLINE) break
-			}
-			_pages.add(page.append(space(MAXLINE - line)).append(separator).append(footer))
-		}
+      for (elem in comp) {
+        page = page.append(elem.body)
+        line += elem.linenum
+        if (line >= MAXLINE) break
+      }
+      _pages.add(page.append(space(MAXLINE - line)).append(separator).append(footer))
+    }
     _contents = _pages
   }
 
@@ -58,34 +58,29 @@ abstract class GameBook {
     player.openBook(Book.book(Component.text(""), Component.text(""), _contents))
   }
 
-  abstract fun content() : MutableList<MutableList<Element>>
-
-  init {
-		App.plugin.logger.info("GameBook init")
-    build()
-  }
+  abstract fun content(): MutableList<MutableList<Element>>
 }
 
-private val baseColor1: TextColor = TextColor.color(0x504946)
-private val baseColor2: TextColor = TextColor.color(0x000000)
-private val conceptColor: TextColor = TextColor.color(0x000000)
+public val baseColor: TextColor = TextColor.color(0x524e4d)
+public val textColor: TextColor = TextColor.color(0x2b2b2b)
+public val hoverColor: TextColor = TextColor.color(0xf8fbf8)
 
 private val separator: Component =
-    Component.text("-------------------\n", baseColor1)
+    Component.text("-------------------\n", baseColor)
         .decoration(TextDecoration.STRIKETHROUGH, true)
         .decoration(TextDecoration.BOLD, false)
 private val footer: Component =
     Component.text("            ")
         .decoration(TextDecoration.STRIKETHROUGH, false)
         .decoration(TextDecoration.BOLD, false)
-        .append(Component.text("Wiki", baseColor1))
-        .append(Component.text(" | ", baseColor1))
-        .append(Component.text("GitHub", baseColor1))
+        .append(Component.text("Wiki", textColor))
+        .append(Component.text(" | ", textColor))
+        .append(Component.text("GitHub", textColor))
 private val title: Component =
-    Component.text("---", baseColor1)
+    Component.text("---", baseColor)
         .decoration(TextDecoration.STRIKETHROUGH, true)
         .append(
-            Component.text("  MC Werewolf  ", baseColor2)
+            Component.text("  MC Werewolf  ", textColor)
                 .decoration(TextDecoration.STRIKETHROUGH, false)
         )
         .append(Component.text("---\n"))

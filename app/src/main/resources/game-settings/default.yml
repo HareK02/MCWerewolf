@@ -1,2 +1,14 @@
+# default game settings
+scenario: default
+
+dayLength: 60
+nightLength: 30
+
+allowRejoin: true
+createLeavingDummy: false
+
 roles:
-  werewolf: "Werewolf"
+  villager:
+    count: 1
+  werewolf:
+    count: 1

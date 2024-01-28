@@ -14,53 +14,79 @@ class Werewolf : CommandExecutor {
       args: Array<String>
   ): Boolean {
     if (args.size == 0) {
-      return help(sender)
+      return auto(sender)
     }
     when (args[0]) {
-      "create" -> return create(sender, args) // /werewolf create [roomname]
-      "leave" -> return leave(sender) // /werewolf leave
+      "create" -> create(sender, args) // /werewolf create [roomname]
+      "leave" -> leave(sender) // /werewolf leave
+      "join" -> join(sender, args) // /werewolf join [roomname]
+      "start" -> start(sender) // /werewolf start
+      "forceend" -> forceend(sender) // /werewolf forceend
       else -> return help(sender)
     }
+    if (command.name == "werewolf&") auto(sender)
+    return true
+  }
+
+  private fun auto(sender: CommandSender): Boolean {
+    if (sender !is Player) {
+      sender.sendMessage(Lang.get("command.must_be_player"))
+      return true
+    }
+    val room = MCWerewolf.instance.getRoom(sender)
+    if (room == null) GameMenu.open(sender)
+    else if (room.inGame) room.Game.openBook(sender) else room.book.open(sender)
+    return true
   }
 
   private fun help(sender: CommandSender): Boolean {
-    sender.sendMessage("-Werewolf Help-")
-    sender.sendMessage("/werewolf start")
+    sender.sendMessage(Lang.get("command.werewolf.help"))
     return true
   }
 
-  private fun create(sender: CommandSender, args: Array<String>): Boolean {
-    // if (App.plugin.hasRoom(sender as Player)) {
-    //   sender.sendMessage("You are already in a room.")
-    //   return true
-    // }
+  private fun create(sender: CommandSender, args: Array<String>) {
+    if (MCWerewolf.instance.hasRoom(sender as Player))
+        return sender.sendMessage(Lang.get("command.werewolf.already_joined"))
     var roomname: String
-    if (args.size > 2) {
-      sender.sendMessage("Too many arguments.")
-      return true
-    }
-    if (args.size == 2) {
-      if (App.plugin.getRoom(args[1]) != null) {
-        sender.sendMessage("Room already exists.")
-        return true
-      }
-      roomname = args[1]
-    } else roomname = sender.name
-    App.plugin.rooms.add(Room(sender as Player, roomname))
-    GameMenu.build()
-    sender.sendMessage("You created the room.")
-    return true
+    if (args.size > 2) return sender.sendMessage(Lang.get("command.werewolf.invalid_argument"))
+    if (args.size == 2) roomname = args[1] else roomname = sender.name
+    if (MCWerewolf.instance.newRoom(sender, roomname))
+        sender.sendMessage(Lang.get("command.werewolf.created"))
+    else sender.sendMessage(Lang.get("command.werewolf.room_name_exists"))
   }
 
-  private fun leave(sender: CommandSender): Boolean {
-    if (!App.plugin.hasRoom(sender as Player)) {
-      sender.sendMessage("You are not in a room.")
-      return true
-    }
-    val room = App.plugin.rooms.find { room -> room.players.contains(sender) }
-    room?.players?.remove(sender)
-    sender.sendMessage("You left the room.")
-    return true
+  private fun join(sender: CommandSender, args: Array<String>) {
+    if (MCWerewolf.instance.hasRoom(sender as Player))
+        return sender.sendMessage(Lang.get("command.werewolf.already_joined"))
+    if (args.size != 2) return sender.sendMessage(Lang.get("command.invalid_argument"))
+    val room = MCWerewolf.instance.getRoom(args[1])
+    if (room == null) return sender.sendMessage(Lang.get("command.werewolf.room_not_found"))
+    if (room.isFull) return sender.sendMessage(Lang.get("command.werewolf.room_full"))
+    if (room.join(sender)) sender.sendMessage(Lang.get("command.werewolf.joined"))
+    else sender.sendMessage(Lang.get("command.werewolf.failed_to_join"))
+  }
+
+  private fun leave(sender: CommandSender) {
+    val room = MCWerewolf.instance.getRoom(sender as Player)
+    if (room == null) return sender.sendMessage(Lang.get("command.werewolf.not_in_room"))
+    if (room.leave(sender)) sender.sendMessage(Lang.get("command.werewolf.left"))
+    if (room.players.size != 0) return
+    MCWerewolf.instance.deleteRoom(room)
+    sender.sendMessage(Lang.get("command.werewolf.disbanded_by_no_player"))
+  }
+
+  private fun start(sender: CommandSender) {
+    val room = MCWerewolf.instance.getRoom(sender as Player)
+    if (room == null) return sender.sendMessage(Lang.get("command.werewolf.not_in_room"))
+    if (room.inGame) return sender.sendMessage(Lang.get("command.werewolf.already_started"))
+    room.start()
+  }
+
+  private fun forceend(sender: CommandSender) {
+    val room = MCWerewolf.instance.getRoom(sender as Player)
+    if (room == null) return sender.sendMessage(Lang.get("command.werewolf.not_in_room"))
+    if (!room.inGame) return sender.sendMessage(Lang.get("command.werewolf.not_started"))
+    room.Game.end()
   }
 }
 
@@ -76,21 +102,19 @@ class Wbook : CommandExecutor {
       return true
     }
     when (args[0]) {
-      "create" -> return menu(sender) // /wbook menu
-			"help" -> return help(sender) // /wbook help
+      "help" -> return help(sender) // /wbook help
       else -> return help(sender)
     }
   }
 
   private fun help(sender: CommandSender): Boolean {
-    sender.sendMessage(Lang.get("wbook.test"))
-    sender.sendMessage(Lang.get("wbook.fallback_test"))
+    sender.sendMessage(Lang.get("command.wbook.help"))
     return true
   }
 
   private fun menu(sender: CommandSender): Boolean {
     if (sender !is Player) {
-      sender.sendMessage("You must be a player.")
+      sender.sendMessage(Lang.get("command.must_be_player"))
       return true
     }
     GameMenu.open(sender)

@@ -5,7 +5,7 @@ group = "net.hareworks"
 version = "1.0"
 
 bukkit {
-    main = "net.hareworks.werewolf.App"
+    main = "net.hareworks.werewolf.MCWerewolf"
     name = "werewolf"
     description = "minecraft werewolf game plugin"
     version = getVersion().toString()
@@ -24,7 +24,13 @@ bukkit {
         register("werewolf") {
             description = "Manage the game"
             usage = "/werewolf <subcommand>"
-            permission = "werewolf.gamemaster"
+            permission = "werewolf.player"
+            permissionMessage = "You don't have permission to run this command"
+        }
+        register("werewolf&") {
+            description = "run command and open book"
+            usage = "/werewolf& <subcommand>"
+            permission = "werewolf.player"
             permissionMessage = "You don't have permission to run this command"
         }
     }
