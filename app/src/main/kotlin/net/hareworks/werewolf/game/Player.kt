@@ -3,24 +3,24 @@ package net.hareworks.werewolf.game
 import net.hareworks.werewolf.game.role.Role
 import org.bukkit.entity.Player
 
-abstract class User(val player: Player) {
+abstract class User(var playerEntity: Player) {
   public fun sendMessage(message: String) {
-    player.sendMessage(message)
+    playerEntity.sendMessage(message)
   }
 
   abstract fun openBook()
 }
 
-public class Player(player: Player, val role: Role) : User(player) {
+public class Player(playerEntity: Player, val role: Role) : User(playerEntity) {
   var alive: Boolean = true
   var disconnected: Boolean = false
 
   override fun openBook() {
-    role.openBook(player)
+    role.openBook(playerEntity)
   }
 }
 
-public class spectator(player: Player) : User(player) {
+public class spectator(playerEntity: Player) : User(playerEntity) {
   override fun openBook() {
     TODO()
   }

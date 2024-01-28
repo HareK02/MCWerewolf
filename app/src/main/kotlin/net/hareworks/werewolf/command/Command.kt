@@ -35,7 +35,8 @@ class Werewolf : CommandExecutor {
     }
     val room = MCWerewolf.instance.getRoom(sender)
     if (room == null) GameMenu.open(sender)
-    else if (room.inGame) room.Game.openBook(sender) else room.book.open(sender)
+    else if (room.inGame) room.Game.getGamePlayer(sender)?.openBook()
+     else room.book.open(sender)
     return true
   }
 

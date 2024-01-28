@@ -1,7 +1,6 @@
 package net.hareworks.werewolf.game
 
 import net.hareworks.werewolf.Lang
-import net.hareworks.werewolf.MCWerewolf
 import net.hareworks.werewolf.Room
 import net.hareworks.werewolf.assign
 import net.hareworks.werewolf.game.scenario.Scenario
@@ -45,32 +44,33 @@ public class Game {
     this.scenario.onGameEnd()
   }
 
+  public fun getGamePlayer(player: org.bukkit.entity.Player): Player? {
+    return players.find { it.playerEntity == player }
+  }
+
   public fun broadcast(message: String) {
     for (player in players) {
       player.sendMessage(message)
     }
   }
 
-  public fun openBook(player: org.bukkit.entity.Player) {
-    players.find { it.player == player }?.openBook()
-  }
-
   public fun onPlayerDisconnect(player: org.bukkit.entity.Player) {
-    val pl = players.find { it.player == player } ?: return
+    val pl = players.find { it.playerEntity == player } ?: return
     pl.disconnected = true
     if (config.allowRejoin) {
-      broadcast(Lang.get("game.player-disconnected").assign(pl.player.name))
+      broadcast(Lang.get("game.player-disconnected").assign(pl.playerEntity.name))
       if (config.createLeavingDummy) {
         // TODO
       }
     } else {}
   }
 
-  public fun onPlayerRejoin(player: org.bukkit.entity.Player) {
-    val pl = players.find { it.player == player } ?: return
-    pl.disconnected = false
+  public fun onPlayerReconnect(player: org.bukkit.entity.Player) {
+    val i = players.indexOf(players.find { it.playerEntity.uniqueId == player.uniqueId })
+    players[i].playerEntity = player
+    players[i].disconnected = false
     if (config.allowRejoin) {
-      pl.alive = true
+      players[i].alive = true
       if (config.createLeavingDummy) {
         // TODO
       }

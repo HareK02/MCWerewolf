@@ -69,9 +69,18 @@ public class MCWerewolf : JavaPlugin() {
 
   fun getRoom(player: Player): Room? {
     return this.rooms.find { room -> room.players.contains(player) }
+        ?: this.rooms.find { it.players.find { it.player?.uniqueId == player.uniqueId } != null }
   }
 
   fun hasRoom(player: Player): Boolean {
     return this.rooms.any { room -> room.players.contains(player) }
   }
+}
+
+fun logger(): java.util.logging.Logger {
+  return MCWerewolf.instance.logger
+}
+
+fun debuglog(msg: String) {
+  logger().info("[DEBUG] $msg")
 }

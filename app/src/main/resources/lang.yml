@@ -1,3 +1,5 @@
+game:
+  player-reconnect: "§aYou have reconnected to the game."
 command:
     must_be_player: "You must be a player to use this command."
     invalid_argument: "Invalid arguments."

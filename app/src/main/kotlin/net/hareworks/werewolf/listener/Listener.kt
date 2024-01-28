@@ -2,8 +2,6 @@ package net.hareworks.werewolf
 
 import com.google.common.collect.Maps
 import io.papermc.paper.event.player.PrePlayerAttackEntityEvent
-import net.kyori.adventure.key.Key
-import net.kyori.adventure.sound.Sound
 import net.md_5.bungee.api.chat.ClickEvent
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -15,6 +13,7 @@ import org.bukkit.event.player.PlayerEvent
 import org.bukkit.event.player.PlayerInteractEntityEvent
 import org.bukkit.event.player.PlayerInteractEvent
 import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerQuitEvent
 import org.bukkit.inventory.EquipmentSlot
 import org.bukkit.scheduler.BukkitRunnable
 
@@ -22,11 +21,11 @@ class EventListener : Listener {
   @EventHandler
   public fun onPlayerInteract(e: PlayerInteractEvent) {
     val a = e.getAction()
-		when (a) {
-			Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> this.onLeftClick(ClickEvent(e))
-			Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> this.onRightClick(ClickEvent(e))
-			else -> {}
-		}
+    when (a) {
+      Action.LEFT_CLICK_AIR, Action.LEFT_CLICK_BLOCK -> this.onLeftClick(ClickEvent(e))
+      Action.RIGHT_CLICK_AIR, Action.RIGHT_CLICK_BLOCK -> this.onRightClick(ClickEvent(e))
+      else -> {}
+    }
   }
   @EventHandler
   public fun onPlayerInteractEntity(e: PlayerInteractEntityEvent) {
@@ -37,7 +36,6 @@ class EventListener : Listener {
     this.onLeftClick(ClickEvent(e))
   }
 
-	
   private class ClickEvent(private val event: PlayerEvent) {
     private val _slot: EquipmentSlot =
         if (event is PlayerInteractEvent) event.getHand() ?: EquipmentSlot.HAND
@@ -83,9 +81,9 @@ class EventListener : Listener {
     runnable.runTaskLater(MCWerewolf.instance, 1L)
     rmap.put(player, runnable)
 
-		val item = player.getInventory().getItem(event.getSlot()).getType()
+    val item = player.getInventory().getItem(event.getSlot()).getType()
     if (item == Material.WRITABLE_BOOK) {
-			player.sendMessage(item.toString())
+      player.sendMessage(item.toString())
       event.setCancelled(true)
     }
   }
@@ -93,10 +91,16 @@ class EventListener : Listener {
   @EventHandler
   public fun onPlayerJoin(e: PlayerJoinEvent) {
     val player: Player = e.getPlayer()
+    val room = MCWerewolf.instance.getRoom(player)
+    if (room == null) return
+    room.onPlayerReconnect(player)
+  }
 
-    if (MCWerewolf.instance.hasRoom(player)) {
-      player.sendMessage("You are in a room.")
-      return
-    }
+  @EventHandler
+  public fun onPlayerLeave(e: PlayerQuitEvent) {
+    val player: Player = e.getPlayer()
+    val room = MCWerewolf.instance.getRoom(player)
+    if (room == null) return
+    room.onPlayerDisconnect(player)
   }
 }
