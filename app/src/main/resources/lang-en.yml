@@ -1,0 +1,73 @@
+game:
+  player-join: "§a%0 has joined the game."
+  player-reconnect: "§aYou have reconnected to the game."
+  player-disconnected: "§c%0 has disconnected from the game."
+  not-enough-players: "§cNot enough players to start the game."
+
+  camp:
+    villagers:
+      name: "Villagers"
+      desc: ""
+    werewolves:
+      name: "Werewolves"
+      desc: ""
+    third-party:
+      name: "Third Party"
+      desc: ""
+
+  role-type:
+    common:
+      name: "Commons"
+      desc: "Commons can be any camp.\nThey are often production/craft jobs."
+    villager:
+      name: "Villagers"
+      desc: "You belong to the villagr camp."
+    werewolf:
+      name: "Werewolves"
+      desc: "You belong to the werewolf camp. Kill a player to win."
+    third-party:
+      name: "Third Party"
+      desc: "You are a third party. Achieve your own win condition."
+
+# Roles
+roles:
+  villager:
+    name: "Villager"
+    desc: "You have no special abilities."
+  werewolf:
+    name: "Werewolf"
+    desc: "You can kill a player at night."
+  foreteller:
+    name: "Foreteller"
+    desc: "You can see the role of a player at night."
+  miner:
+    name: "Miner"
+    desc: "You can mine ores."
+  sheriff:
+    name: "Sheriff"
+    desc: "You can kill a player. You win if you are the last player alive. The game does not end even if all werewolves are dead as long as you are alive."
+  necromancer:
+    name: "Necromancer"
+    desc: ""
+  tracker:
+    name: "Tracker"
+    desc: "You can track a player's direction with a compass."
+
+# Commands
+command:
+  must_be_player: "You must be a player to use this command."
+  invalid_argument: "Invalid arguments."
+  wbook:
+    help: "§2aaaa"
+  werewolf:
+    help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
+    already_joined: "You are already in a room."
+    room_name_exists: "Room name already exists."
+    created: "Room created."
+    not_found: "Room not found."
+    room_full: "Room is full."
+    joined: "You joined the room."
+    not_in_room: "You are not in a room."
+    left: "You left the room."
+    disbanded_by_no_player: "Room disbanded because there is no player."
+    room_not_found: "Room not found."

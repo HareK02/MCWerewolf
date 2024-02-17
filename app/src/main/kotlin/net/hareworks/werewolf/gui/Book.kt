@@ -1,10 +1,11 @@
-package net.hareworks.werewolf.book
+package net.hareworks.werewolf.gui.book
 
-import net.hareworks.werewolf.MCWerewolf
 import net.kyori.adventure.inventory.Book
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.format.TextColor
 import net.kyori.adventure.text.format.TextDecoration
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.key.Key
 import org.bukkit.entity.Player
 
 public class Element {
@@ -14,7 +15,7 @@ public class Element {
     this.linenum = linenum
     this.body = body
   }
-} 
+}
 
 abstract class GameBook {
   companion object {
@@ -56,6 +57,7 @@ abstract class GameBook {
 
   public fun open(player: Player) {
     player.openBook(Book.book(Component.text(""), Component.text(""), _contents))
+    player.playSound(Sound.sound(Key.key("item.book.page_turn"), Sound.Source.MASTER, 0.6f, 1f))
   }
 
   abstract fun content(): MutableList<MutableList<Element>>
@@ -63,6 +65,7 @@ abstract class GameBook {
 
 public val baseColor: TextColor = TextColor.color(0x524e4d)
 public val textColor: TextColor = TextColor.color(0x2b2b2b)
+public val signColor: TextColor = TextColor.color(0x727171)
 public val hoverColor: TextColor = TextColor.color(0xf8fbf8)
 
 private val separator: Component =

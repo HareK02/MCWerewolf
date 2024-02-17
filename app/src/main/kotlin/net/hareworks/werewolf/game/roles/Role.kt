@@ -1,33 +1,39 @@
 package net.hareworks.werewolf.game.role
 
-import org.bukkit.entity.Player
+import net.hareworks.werewolf.game.Player
 
-public enum class Team {
-  Villager,
-  Werewolf,
-  ThirdCamp,
-}
-
-data class Meta(
-    val name: String,
-    val description: String,
-    val team: Team,
-    val composite: Boolean,
-)
-
-abstract class Role {
-  companion object {
-    public fun valueOf(name: String): Role? {
-      return when (name) {
-        "villager" -> Villager()
-        "werewolf" -> Werewolf()
-        else -> null
-      }
-    }
+interface RoleObject {
+  public enum class Type {
+    Common,
+    Citizen,
+    Werewolf,
+    Third,
   }
 
-  abstract val meta: Meta
+  val name: String
+  val description: String
+  val type: Type
+  val composite: Boolean
 
-  abstract fun setConfig(config: Map<String, Any>)
-  abstract fun openBook(player: Player)
+  fun instantiate(): Role
+}
+
+interface Role {
+  companion object {
+    public val roles: Map<String, RoleObject> =
+        mapOf(
+            "villager" to villager,
+            "werewolf" to werewolf,
+            "foreteller" to foreteller,
+            "miner" to miner,
+            "sheriff" to sheriff,
+            "necromancer" to necromancer,
+            "witch" to witch,
+            "tracker" to tracker,
+        )
+  }
+
+  val meta: RoleObject
+
+  fun openBook(player: Player)
 }

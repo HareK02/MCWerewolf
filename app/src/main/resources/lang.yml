@@ -1,19 +1,83 @@
+system:
+  prefix: "§7[§6Werewolf§7]§r "
+  no-permission: "§cYou don't have permission to do that."
+  not-a-player: "§cYou must be a player to do that."
+
 game:
-  player-reconnect: "§aYou have reconnected to the game."
-command:
-    must_be_player: "You must be a player to use this command."
-    invalid_argument: "Invalid arguments."
-    wbook:
-      help: "§2aaaa"
+  joined: "§a%0 がゲームに参加しました。"
+  reconnected: "§aゲームに再接続しました。"
+  reconnected-to-in-progress: "§a進行中のゲームに再接続しました。"
+  player-disconnected: "§c%0 がゲームから切断されました。"
+  not-enough-players: "§cゲームを開始するには十分なプレイヤーがいません。"
+  will-start-soon: "§aゲームが開始されます..."
+
+  camp:
+    citizens:
+      name: "Citizens"
+      desc: ""
+    werewolves:
+      name: "Werewolves"
+      desc: ""
+    third-party:
+      name: "Third Party"
+      desc: ""
+
+  role-type:
+    common:
+      name: "一般役職"
+      desc: "市民陣営または人狼陣営が就く可能性がある。生産/クラフト職が多い。\n第三陣営の複合職"
+    citizen:
+      name: "市民役職"
+      desc: "市民陣営に属する。\n人狼陣営の全滅で勝利。"
     werewolf:
-      help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
-      already_joined: "You are already in a room."
-      room_name_exists: "Room name already exists."
-      created: "Room created."
-      not_found: "Room not found."
-      room_full: "Room is full."
-      joined: "You joined the room."
-      not_in_room: "You are not in a room."
-      left: "You left the room."
-      disbanded_by_no_player: "Room disbanded because there is no player."
-      room_not_found: "Room not found."
+      name: "人狼役職"
+      desc: "人狼陣営に属する。プレイヤーを殺害することで勝利する。"
+    third-party:
+      name: "第三陣営役職"
+      desc: "自身の勝利条件を満たすことで勝利する。"
+
+# Roles
+roles:
+  villager:
+    name: "村人"
+    desc: "一般人。特殊な能力を持たない。"
+  werewolf:
+    name: "人狼"
+    desc: "プレイヤーを殺害することができる。"
+  foreteller:
+    name: "占い師"
+    desc: "プレイヤーの役職を占うことができる。"
+  miner:
+    name: "鉱夫"
+    desc: "鉱石を採掘することができる。"
+  sheriff:
+    name: "シェリフ"
+    desc: "殺害可能。最後の一人になると勝利。人狼(又は市民)が全滅しても、シェリフがいる限りゲームは終わらない。"
+  necromancer:
+    name: "降霊術師"
+    desc: "ゲーム中一度だけ死体の役職を自身に降ろせる。勝利条件は変わらない。"
+  witch:
+    name: "魔女"
+    desc: "遅効性の毒でプレイヤーを殺害することができる。"
+  tracker:
+    name: "トラッカー"
+    desc: "コンパスを用いて、プレイヤーの方角を追跡できる。"
+
+# Commands
+command:
+  must_be_player: "You must be a player to use this command."
+  invalid_argument: "Invalid arguments."
+  wbook:
+    help: "§2aaaa"
+  werewolf:
+    help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
+    already_joined: "You are already in a room."
+    room_name_exists: "Room name already exists."
+    created: "Room created."
+    not_found: "Room not found."
+    room_full: "Room is full."
+    joined: "You joined the room."
+    not_in_room: "You are not in a room."
+    left: "You left the room."
+    disbanded_by_no_player: "Room disbanded because there is no player."
+    room_not_found: "Room not found."

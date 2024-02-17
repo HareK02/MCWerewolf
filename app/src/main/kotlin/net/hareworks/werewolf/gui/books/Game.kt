@@ -1,4 +1,4 @@
-package net.hareworks.werewolf.book
+package net.hareworks.werewolf.gui.book
 
 import net.hareworks.werewolf.MCWerewolf
 import net.kyori.adventure.text.Component
@@ -15,7 +15,7 @@ public object GameMenu : GameBook() {
             .append(
                 Component.text("[Create room]\n", textColor)
                     .hoverEvent(Component.text("Click to create a room.", hoverColor))
-                    .clickEvent(ClickEvent.runCommand("/werewolf& create"))
+                    .clickEvent(ClickEvent.runCommand("/ww menu create"))
             )
 
     val list =
@@ -38,12 +38,12 @@ public object GameMenu : GameBook() {
                   else
                       Component.text(" □ ")
                           .hoverEvent(Component.text("Open", textColor))
-                          .clickEvent(ClickEvent.runCommand("/werewolf& join " + room.roomname))
+                          .clickEvent(ClickEvent.runCommand("/ww menu join " + room.roomname))
               )
               .append(
                   Component.text(room.roomname, textColor)
                       .hoverEvent(Component.text("Click to join the room.", hoverColor))
-                      .clickEvent(ClickEvent.runCommand("/werewolf& join " + room.roomname))
+                      .clickEvent(ClickEvent.runCommand("/ww menu join " + room.roomname))
               )
               .append(Component.text("\n"))
       linenum++

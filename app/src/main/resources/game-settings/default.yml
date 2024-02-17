@@ -1,14 +1,22 @@
+profile_name: default
 # default game settings
 scenario: default
 
 dayLength: 60
 nightLength: 30
+maxPlayers: 10
+minPlayers: 5
+maxVillagers: 5
+maxWerewolves: 2
 
-allowRejoin: true
-createLeavingDummy: false
+system:
+  allowRejoin: true
+  createLeavingDummy: false
 
+# ロール一覧はgithub(https://github.com/HareK02/MCWerewolf)を参照
+# 
 roles:
-  villager:
+  foreteller:
     count: 1
-  werewolf:
-    count: 1
+    config:
+      limit: 1

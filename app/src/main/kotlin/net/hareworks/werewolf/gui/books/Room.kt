@@ -1,6 +1,7 @@
-package net.hareworks.werewolf.book
+package net.hareworks.werewolf.gui.book
 
 import net.hareworks.werewolf.Room
+import net.hareworks.werewolf.debuglog
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.text.event.ClickEvent
 
@@ -10,21 +11,26 @@ public class RoomMenu(room: Room) : GameBook() {
 
   private fun menu(page: Int): Element {
     val component =
-        Component.text("Room: " + room.roomname + "\n       ", textColor)
+        Component.text("Room: " + room.roomname + "\n", textColor)
+            // .append(
+            //     Component.text("[Config]", textColor)
+            //         .hoverEvent(Component.text("Click to configure the room.", hoverColor))
+            //         .clickEvent(ClickEvent.runCommand("/ww menu config"))
+            // )
             .append(
-                Component.text("[Config]", textColor)
-                    .hoverEvent(Component.text("Click to configure the room.", hoverColor))
-                    .clickEvent(ClickEvent.runCommand("/werewolf& config"))
+              Component.text(
+                  "Profile: " + room.config.name + "\n",
+              )
             )
-            .append(Component.text("  "))
+            .append(Component.text("             "))
             .append(
-                Component.text("[Start]\n", textColor)
+                Component.text("[Start Game]\n", textColor)
                     .hoverEvent(Component.text("Click to start the game.", hoverColor))
-                    .clickEvent(ClickEvent.runCommand("/werewolf& start"))
+                    .clickEvent(ClickEvent.runCommand("/ww start"))
             )
             .append(
                 Component.text(
-                    "Players:       " + room.players.size + "/" + room.capacity + "\n",
+                    "Players:        " + room.players.size + "/" + room.capacity + "\n",
                     textColor
                 )
             )
@@ -38,7 +44,7 @@ public class RoomMenu(room: Room) : GameBook() {
     var component = Component.empty()
     val list = room.players.subList(page * size, room.players.size.coerceAtMost((page + 1) * size))
     for (player in list) {
-      component = Component.text(" " + player.name + "\n", textColor)
+      component = component.append(Component.text(" " + player.name + "\n", textColor))
       linenum++
     }
     component =

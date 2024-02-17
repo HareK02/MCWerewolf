@@ -1,7 +1,15 @@
 package net.hareworks.werewolf
 
 import java.io.File
-import net.hareworks.werewolf.book.GameMenu
+import kotlin.collections.mutableMapOf
+import net.hareworks.kommandlib.KommandLib
+import net.hareworks.werewolf.gui.book.GameMenu
+import net.hareworks.werewolf.gui.inventory.InventoryGUIListener
+import net.kyori.adventure.audience.Audience
+import net.kyori.adventure.bossbar.BossBar
+import net.kyori.adventure.sound.Sound
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.title.Title
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import org.bukkit.plugin.java.JavaPlugin
@@ -11,20 +19,28 @@ public class MCWerewolf : JavaPlugin() {
     lateinit var instance: MCWerewolf
       private set
   }
+  lateinit var kommand: KommandLib
   public var rooms: MutableList<Room> = mutableListOf()
   public var defaultConfig: YamlConfiguration = YamlConfiguration()
   public var langConfig: YamlConfiguration = YamlConfiguration()
+
   override fun onEnable() {
     instance = this
+
+    kommand = command()
+
+    debuglog(getServer().getPluginCommand("ww").toString())
     InitConfig()
-    getServer().getMessenger().registerOutgoingPluginChannel(this, "BungeeCord")
-    getCommand("wbook")?.setExecutor(Wbook())
-    getCommand("werewolf")?.setExecutor(Werewolf())
-    getCommand("werewolf&")?.setExecutor(Werewolf())
     getServer().getPluginManager().registerEvents(EventListener(), this)
+    getServer().getPluginManager().registerEvents(InventoryGUIListener(), this)
 
     this.logger.info(defaultConfig.getConfigurationSection("roles")!!.getKeys(false).toString())
   }
+  override fun onDisable() {
+    kommand.unregister()
+    rooms.forEach { it.forceend() }
+  }
+
   private fun InitConfig() {
     var defaultGameSettingsFile = File(getDataFolder(), "game-settings/default.yml")
     if (!defaultGameSettingsFile.exists()) {
@@ -74,6 +90,35 @@ public class MCWerewolf : JavaPlugin() {
 
   fun hasRoom(player: Player): Boolean {
     return this.rooms.any { room -> room.players.contains(player) }
+  }
+
+  fun runTaskLater(ticks: Long, task: () -> Unit) {
+    getServer().getScheduler().runTaskLater(this, task, ticks)
+  }
+}
+
+abstract interface Broadcaster {
+  val players: List<Audience>
+
+  public fun broadcast(message: String) {
+    for (p in this.players) {
+      p.sendMessage(Component.text(message))
+    }
+  }
+  public fun broadcast(message: Component) {
+    for (p in this.players) {
+      p.sendMessage(message)
+    }
+  }
+  public fun broadcastTitle(title: Title) {
+    for (p in this.players) {
+      p.showTitle(title)
+    }
+  }
+  public fun broadcastSound(sound: Sound) {
+    for (p in this.players) {
+      p.playSound(sound, Sound.Emitter.self())
+    }
   }
 }
 
