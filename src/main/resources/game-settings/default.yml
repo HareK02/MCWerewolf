@@ -2,8 +2,8 @@ profile_name: default
 # default game settings
 scenario: default
 
-dayLength: 60
-nightLength: 30
+dayLength: 300
+nightLength: 180
 maxPlayers: 10
 minPlayers: 5
 maxVillagers: 5

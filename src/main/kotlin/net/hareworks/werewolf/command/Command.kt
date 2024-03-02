@@ -108,7 +108,7 @@ fun command(): KommandLib {
                     else room.start()
                   },
               "forceend" to Route { sender, _ -> sender.sendMessage("forceend") },
-          ) { sender, _ -> sender.sendMessage("werewolf") }
+          ) { sender, _ -> (sender as Player).performCommand("ww menu") }
           .apply { permission = "werewolf.player" }
   return KommandLib(
       JavaPlugin.getPlugin(MCWerewolf::class.java),

@@ -7,10 +7,17 @@ import net.hareworks.werewolf.Room
 import net.hareworks.werewolf.assign
 import net.hareworks.werewolf.debuglog
 import net.hareworks.werewolf.game.role.Role
+import net.hareworks.werewolf.game.role.RoleObject
 import net.hareworks.werewolf.game.scenario.Scenario
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.scheduler.BukkitRunnable
+
+enum class Winner {
+  Citizens,
+  Werewolves,
+  None,
+}
 
 public class Game(room: Room) : Broadcaster {
   val config: Config = room.config
@@ -26,17 +33,17 @@ public class Game(room: Room) : Broadcaster {
   val day: Int
     get() = time / (config.dayLength + config.nightLength) + 1
 
-  val timerbar =
+  private var isPlayerDeath: Boolean = false
+  private val timerbar =
       BossBar.bossBar(Component.text("Day"), 0.0f, BossBar.Color.YELLOW, BossBar.Overlay.NOTCHED_10)
   private var ticker: BukkitRunnable =
       object : BukkitRunnable() {
         override fun run() {
           time++
-          when (time % config.dayLength + config.nightLength) {
+          when (time % (config.dayLength + config.nightLength)) {
             0 -> onNightEnd()
             config.dayLength -> onDayEnd()
           }
-
           if (timeState == Time.Day) {
             timerbar.name(
                 Component.text(
@@ -60,6 +67,31 @@ public class Game(room: Room) : Broadcaster {
                 (config.nightLength - time % config.nightLength).toFloat() / config.nightLength
             )
           }
+
+          players.forEach {
+            it.setPlayerTime(
+                (if (timeState == Time.Day)
+                        (time.toFloat() % (config.dayLength + config.nightLength) /
+                            config.dayLength * 13000)
+                    else
+                        ((time.toFloat() % (config.dayLength + config.nightLength) /
+                            config.nightLength) * 10000) + 10000)
+                    .toLong(),
+                false
+            )
+          }
+
+          if (isPlayerDeath) {
+            val citizens = players.filter { it.role.meta.type == RoleObject.Type.Citizen }.count()
+            val werewolves =
+                players.filter { it.role.meta.type == RoleObject.Type.Werewolf }.count()
+
+            if (citizens == 0 || werewolves == 0) {
+              
+            }
+
+            isPlayerDeath = false
+          }
         }
       }
 
@@ -80,16 +112,29 @@ public class Game(room: Room) : Broadcaster {
     }
   }
 
-  public fun reset() {
-    this.scenario = Scenario.load(this.config.scenario, this)
-  }
-
   public fun start() {
     this.onGameStart()
   }
 
-  public fun end() {
+  public fun forceend() {
     this.onGameEnd()
+  }
+
+  public fun gameEnd(winner: Winner) {
+    this.onGameEnd()
+    when (winner) {
+      Winner.Citizens -> broadcast(Lang.get("game.winner-citizens"))
+      Winner.Werewolves -> broadcast(Lang.get("game.winner-werewolves"))
+      Winner.None -> broadcast(Lang.get("game.winner-none"))
+    }
+    broadcastSound(
+        net.kyori.adventure.sound.Sound.sound(
+            net.kyori.adventure.key.Key.key("ui.toast.challenge_complete"),
+            net.kyori.adventure.sound.Sound.Source.MASTER,
+            0.6f,
+            0.9f
+        )
+    )
   }
 
   public fun getGamePlayer(player: org.bukkit.entity.Player): Player? {
@@ -130,30 +175,35 @@ public class Game(room: Room) : Broadcaster {
     players.forEach { it.showBossBar(timerbar) }
     ticker.runTaskTimer(MCWerewolf.instance, 0, 1)
     scenario.onGameStart()
-    broadcast("Game started.")
+    broadcast(Lang.get("game.started"))
   }
 
   private fun onGameEnd() {
     scenario.onGameEnd()
     ticker.cancel()
-    players.forEach { it.hideBossBar(timerbar) }
-    broadcast("Game ended.")
+    players.forEach {
+      it.hideBossBar(timerbar)
+      it.playerEntity.resetPlayerTime()
+    }
+    broadcast(Lang.get("game.ended"))
   }
 
   private fun onDayEnd() {
     timeState = Time.Night
+    timerbar.color(BossBar.Color.BLUE)
     scenario.onDayEnd()
-    broadcast("Day ended.")
+    broadcast(Lang.get("game.on-day-end"))
   }
 
   private fun onNightEnd() {
     timeState = Time.Day
+    timerbar.color(BossBar.Color.YELLOW)
     scenario.onNightEnd()
-    broadcast("Night ended.")
+    broadcast(Lang.get("game.on-night-end"))
   }
 
   private fun onPlayerDeath() {
     scenario.onPlayerDeath()
-    broadcast("Player died.")
+    isPlayerDeath = true
   }
 }

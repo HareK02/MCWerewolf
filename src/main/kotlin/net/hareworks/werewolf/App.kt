@@ -36,6 +36,7 @@ public class MCWerewolf : JavaPlugin() {
 
     this.logger.info(defaultConfig.getConfigurationSection("roles")!!.getKeys(false).toString())
   }
+
   override fun onDisable() {
     kommand.unregister()
     rooms.forEach { it.forceend() }

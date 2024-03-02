@@ -78,7 +78,7 @@ public class Room(creator: Player, name: String) : Broadcaster {
   }
 
   fun forceend() {
-    this.Game?.end()
+    this.Game?.forceend()
     this.Game = null
   }
 

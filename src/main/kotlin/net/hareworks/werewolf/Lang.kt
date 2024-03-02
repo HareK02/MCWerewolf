@@ -28,4 +28,4 @@ fun String.assign(vararg args: String): String {
     result = result.replace("%$i", args[i])
   }
   return result
-}
+} // "my %0 is %1".assign("name", "John") -> "my name is John"

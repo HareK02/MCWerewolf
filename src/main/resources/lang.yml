@@ -10,6 +10,13 @@ game:
   player-disconnected: "§c%0 がゲームから切断されました。"
   not-enough-players: "§cゲームを開始するには十分なプレイヤーがいません。"
   will-start-soon: "§aゲームが開始されます..."
+  started: "§aゲームが開始されました。"
+  ended: "§aゲームが終了しました。"
+
+  on-night-end: "§a夜が明けました。"
+  on-day-end: "§a日が暮れました。"
+
+
 
   camp:
     citizens:

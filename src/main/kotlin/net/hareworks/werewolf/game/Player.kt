@@ -33,6 +33,9 @@ abstract class User(var playerEntity: Player) : Audience {
   override public fun hideBossBar(bar: BossBar) {
     playerEntity.hideBossBar(bar)
   }
+  fun setPlayerTime(time: Long, relative: Boolean) {
+    playerEntity.setPlayerTime(time, relative)
+  }
 
   abstract fun openBook()
 }
