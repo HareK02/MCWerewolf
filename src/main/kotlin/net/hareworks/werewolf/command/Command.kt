@@ -1,5 +1,6 @@
 package net.hareworks.werewolf
 
+import net.hareworks.guilib.*
 import net.hareworks.kommandlib.*
 import net.hareworks.werewolf.gui.book.GameMenu
 import org.bukkit.entity.Player
@@ -76,7 +77,7 @@ fun command(): KommandLib {
                               else sender.sendMessage(Lang.get("command.werewolf.room_name_exists"))
                             }
                           },
-                  ) { sender, args ->
+                  ) { sender, _ ->
                     if (MCWerewolf.instance.hasRoom(sender as Player))
                         sender.sendMessage(Lang.get("command.werewolf.already_joined"))
                     else {
@@ -98,7 +99,7 @@ fun command(): KommandLib {
                                 sender.sendMessage(Lang.get("command.werewolf.joined"))
                             else sender.sendMessage(Lang.get("command.werewolf.room_not_exists"))
                           },
-                  ) { sender, _ -> },
+                  ) { _, _ -> },
               "start" to
                   Route { sender, _ ->
                     val room = MCWerewolf.instance.getRoom(sender as Player)
@@ -108,6 +109,65 @@ fun command(): KommandLib {
                     else room.start()
                   },
               "forceend" to Route { sender, _ -> sender.sendMessage("forceend") },
+              "test" to
+                  Route { sender, _ ->
+                    var bool1 = true
+                    var number1 = 0
+                    var number2 = 0
+                    CUI(Vec2(-80, -30)) {
+                          register(
+                              Element("Test GUI").apply {
+                                width = 20
+                                position = CUIComponent.Position.CENTER
+                              },
+                              Element("v1.0").apply {
+                                width = 0
+                                position = CUIComponent.Position.RIGHT
+                              },
+                              NewLine(),
+                              Element("-".repeat(20)),
+                              NewLine(),
+                              *arrayOf(
+                                      Interactable(
+                                          "Toggle",
+                                          ToggleButton(Ref({ bool1 }, { bool1 = it }))
+                                      ),
+                                      Interactable(
+                                          "Number",
+                                          Number(Ref({ number1 }, { number1 = it }), 0, 10)
+                                      ),
+                                      Interactable(
+                                          "Slider",
+                                          Slider(Ref({ number2 }, { number2 = it }), 0, 10)
+                                      ),
+                                      Interactable(
+                                          "NextPage",
+                                          Anchor(
+                                              "NextPage",
+                                              CUI(Vec2(-80, -30)) {
+                                                register(
+                                                    Element("Test GUI").apply {
+                                                      width = 20
+                                                      position = CUIComponent.Position.CENTER
+                                                    },
+                                                    Element("v1.0").apply {
+                                                      width = 0
+                                                      position = CUIComponent.Position.RIGHT
+                                                    },
+                                                    NewLine(),
+                                                    Element("-".repeat(20)),
+                                                    NewLine(),
+                                                    Element("This is the next page"),
+                                                )
+                                              }
+                                          )
+                                      ),
+                                  )
+                                  .also { it.forEach { it.width = 20 } }
+                          )
+                        }
+                        .open(sender as Player)
+                  },
           ) { sender, _ -> (sender as Player).performCommand("ww menu") }
           .apply { permission = "werewolf.player" }
   return KommandLib(

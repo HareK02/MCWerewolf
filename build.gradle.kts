@@ -40,6 +40,7 @@ repositories {
 dependencies {
   compileOnly("io.papermc.paper:paper-api:1.20.4-R0.1-SNAPSHOT")
   compileOnly("org.jetbrains.kotlin:kotlin-stdlib:1.9.22")
+  compileOnly(files("Libs/GuiLib-1.0.jar"))
 }
 
 tasks {
