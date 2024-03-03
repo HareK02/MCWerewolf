@@ -1,4 +1,2 @@
-# Village of Crafters
-
-## Description
+# MCWerewolf
 
