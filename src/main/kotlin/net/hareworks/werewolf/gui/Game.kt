@@ -32,7 +32,7 @@ class GameMenu() : GUI {
                     "Links",
                     ActionElement({ player ->
                           player.sendMessage(
-                              Component.text("MC Werewolf Links", NamedTextColor.GRAY)
+                              Component.text("MC Werewolf Links")
                                   .append(Component.newline())
                                   .append(
                                       Component.text("Wiki")
@@ -78,7 +78,7 @@ class GameMenu() : GUI {
                                   )
                           )
                         })
-                        .apply { component = Component.text("Wiki/Discord/Github") }
+                        .apply { component = Component.text("Wiki/Github") }
                 )
                 .apply { width = 20 },
             Interactable(
@@ -90,6 +90,11 @@ class GameMenu() : GUI {
                     })
                 )
                 .apply { width = 20 },
+            Element("-".repeat(22)).apply {
+              position = CUIComponent.Position.CENTER
+              width = 20
+            },
+            NewLine(),
             Element("Rooms").apply { width = 20 },
             NewLine(),
             *(MCWerewolf.instance
