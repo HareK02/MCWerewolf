@@ -3,7 +3,6 @@ package net.hareworks.werewolf
 import java.time.Duration
 import net.hareworks.werewolf.game.Config
 import net.hareworks.werewolf.game.Game
-import net.hareworks.werewolf.gui.book.RoomConfigMenu
 import net.hareworks.werewolf.gui.book.RoomMenu
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
@@ -16,8 +15,7 @@ public class Room(creator: Player, name: String) : Broadcaster {
   val config: Config = Config.default()
 
   override val players: MutableList<Player> = mutableListOf(creator)
-  val book: RoomMenu = RoomMenu(this)
-  val configBook: RoomConfigMenu = RoomConfigMenu(this.config)
+  val gui: RoomMenu = RoomMenu(this)
   val inGame: Boolean
     get() = this.Game != null
   var isPrivate: Boolean = false
@@ -33,7 +31,6 @@ public class Room(creator: Player, name: String) : Broadcaster {
     for (p in this.players) {
       p.sendMessage(Lang.get("game.joined").assign(player.name))
     }
-    this.book.build()
     return true
   }
 
@@ -97,8 +94,5 @@ public class Room(creator: Player, name: String) : Broadcaster {
     } else players[i].sendMessage(Lang.get("game.reconnected"))
   }
 
-  init {
-    this.book.build()
-    this.configBook.build()
-  }
+  init {}
 }

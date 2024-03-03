@@ -1,12 +1,8 @@
 package net.hareworks.werewolf
 
 import java.io.File
-import kotlin.collections.mutableMapOf
 import net.hareworks.kommandlib.KommandLib
-import net.hareworks.werewolf.gui.book.GameMenu
-import net.hareworks.werewolf.gui.inventory.InventoryGUIListener
 import net.kyori.adventure.audience.Audience
-import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
@@ -32,7 +28,6 @@ public class MCWerewolf : JavaPlugin() {
     debuglog(getServer().getPluginCommand("ww").toString())
     InitConfig()
     getServer().getPluginManager().registerEvents(EventListener(), this)
-    getServer().getPluginManager().registerEvents(InventoryGUIListener(), this)
 
     this.logger.info(defaultConfig.getConfigurationSection("roles")!!.getKeys(false).toString())
   }
@@ -71,13 +66,11 @@ public class MCWerewolf : JavaPlugin() {
   fun newRoom(player: Player, name: String): Boolean {
     if (getRoom(name) != null) return false
     rooms.add(Room(player, name))
-    GameMenu.build()
     return true
   }
 
   fun deleteRoom(room: Room) {
     rooms.remove(room)
-    GameMenu.build()
   }
 
   fun getRoom(name: String): Room? {
