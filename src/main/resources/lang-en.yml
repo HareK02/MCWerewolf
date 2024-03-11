@@ -57,8 +57,6 @@ roles:
 command:
   must_be_player: "You must be a player to use this command."
   invalid_argument: "Invalid arguments."
-  wbook:
-    help: "§2aaaa"
   werewolf:
     help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
     already_joined: "You are already in a room."

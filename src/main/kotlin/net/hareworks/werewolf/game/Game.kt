@@ -3,12 +3,13 @@ package net.hareworks.werewolf.game
 import net.hareworks.werewolf.Broadcaster
 import net.hareworks.werewolf.Lang
 import net.hareworks.werewolf.MCWerewolf
-import net.hareworks.werewolf.Room
+import net.hareworks.werewolf.Session
 import net.hareworks.werewolf.assign
 import net.hareworks.werewolf.debuglog
 import net.hareworks.werewolf.game.role.Role
-import net.hareworks.werewolf.game.role.RoleObject
+import net.hareworks.werewolf.game.role.RoleData
 import net.hareworks.werewolf.game.scenario.Scenario
+import net.kyori.adventure.audience.Audience
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.text.Component
 import org.bukkit.scheduler.BukkitRunnable
@@ -19,11 +20,18 @@ enum class Winner {
   None,
 }
 
-public class Game(room: Room) : Broadcaster {
+public class Game(room: Session) : Broadcaster {
   val config: Config = room.config
   var scenario: Scenario = Scenario.load(config.scenario, this)
-  override val players: MutableList<Player> = mutableListOf()
-  val spectators: MutableList<Player> = mutableListOf()
+  override val targets: MutableList<Audience>
+    get() {
+      val list = mutableListOf<Audience>()
+      list.addAll(players)
+      list.addAll(spectators)
+      return list
+    }
+  val players: MutableList<Player> = mutableListOf()
+  val spectators: MutableList<Spectator> = mutableListOf()
   public enum class Time {
     Day,
     Night,
@@ -82,13 +90,11 @@ public class Game(room: Room) : Broadcaster {
           }
 
           if (isPlayerDeath) {
-            val citizens = players.filter { it.role.meta.type == RoleObject.Type.Citizen }.count()
+            val citizens = players.filter { it.role.meta.type == RoleData.Type.Citizen }.count()
             val werewolves =
-                players.filter { it.role.meta.type == RoleObject.Type.Werewolf }.count()
+                players.filter { it.role.meta.type == RoleData.Type.Werewolf }.count()
 
-            if (citizens == 0 || werewolves == 0) {
-              
-            }
+            if (citizens == 0 || werewolves == 0) {}
 
             isPlayerDeath = false
           }
@@ -97,7 +103,7 @@ public class Game(room: Room) : Broadcaster {
 
   init {
     val roles: HashMap<String, Int> =
-        hashMapOf<String, Int>().apply { config.roles.forEach { this[it.name] = it.amount } }
+        hashMapOf<String, Int>().apply { config.roles.forEach { this[it.key] = it.value.amount } }
     debuglog("Game: Starting game with ${room.players.size} players and $roles")
     while (roles.any { it.value > 0 } || players.size < room.players.size) {
       val roleIndex = (0 until roles.size).random()
@@ -116,7 +122,7 @@ public class Game(room: Room) : Broadcaster {
     this.onGameStart()
   }
 
-  public fun forceend() {
+  public fun forceEnd() {
     this.onGameEnd()
   }
 

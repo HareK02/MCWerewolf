@@ -2,7 +2,27 @@ package net.hareworks.werewolf.game.role
 
 import net.hareworks.werewolf.game.Player
 
-interface RoleObject {
+interface Role {
+  companion object {
+    public val roles: Map<String, RoleData> =
+        mapOf(
+            "villager" to villager,
+            "werewolf" to werewolf,
+            "foreteller" to foreteller,
+            "miner" to miner,
+            "sheriff" to sheriff,
+            "necromancer" to necromancer,
+            "witch" to witch,
+            "tracker" to tracker,
+        )
+  }
+
+  val meta: RoleData
+
+  fun openBook(player: Player)
+}
+
+interface RoleData {
   public enum class Type {
     Common,
     Citizen,
@@ -16,24 +36,4 @@ interface RoleObject {
   val composite: Boolean
 
   fun instantiate(): Role
-}
-
-interface Role {
-  companion object {
-    public val roles: Map<String, RoleObject> =
-        mapOf(
-            "villager" to villager,
-            "werewolf" to werewolf,
-            "foreteller" to foreteller,
-            "miner" to miner,
-            "sheriff" to sheriff,
-            "necromancer" to necromancer,
-            "witch" to witch,
-            "tracker" to tracker,
-        )
-  }
-
-  val meta: RoleObject
-
-  fun openBook(player: Player)
 }

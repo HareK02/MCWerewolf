@@ -72,19 +72,17 @@ roles:
 
 # Commands
 command:
-  must_be_player: "You must be a player to use this command."
-  invalid_argument: "Invalid arguments."
-  wbook:
-    help: "§2aaaa"
+  must_be_player: "プレイヤーとして実行する必要があります。"
+  invalid_argument: "無効な引数です。"
   werewolf:
-    help: "subcommands: create, join, leave, list, info, start, end, vote, cancel, kick, set, reload"
-    already_joined: "You are already in a room."
-    room_name_exists: "Room name already exists."
-    created: "Room created."
-    not_found: "Room not found."
-    room_full: "Room is full."
-    joined: "You joined the room."
-    not_in_room: "You are not in a room."
-    left: "You left the room."
-    disbanded_by_no_player: "Room disbanded because there is no player."
-    room_not_found: "Room not found."
+    help: ""
+    already_joined: "すでにゲームに参加しています。"
+    room_name_exists: "その名前の部屋はすでに存在します。"
+    created: "部屋を作成しました。"
+    not_found: "部屋が見つかりません。"
+    room_full: "部屋が満員です。"
+    joined: "部屋に参加しました。"
+    not_in_room: "部屋に参加していません。"
+    left: "部屋から退出しました。"
+    disbanded_by_no_player: "プレイヤーがいないため、部屋が解散されました。"
+    room_not_found: "部屋が見つかりません。"

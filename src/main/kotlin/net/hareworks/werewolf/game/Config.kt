@@ -3,10 +3,10 @@ package net.hareworks.werewolf.game
 import net.hareworks.werewolf.MCWerewolf
 import net.hareworks.werewolf.debuglog
 import net.hareworks.werewolf.game.role.Role
-import net.hareworks.werewolf.game.role.RoleObject
+import net.hareworks.werewolf.game.role.RoleData
 import org.bukkit.configuration.file.YamlConfiguration
 
-data class RoleConfig(val name: String, var amount: Int, val config: Map<String, Any>?)
+data class RoleConfig(var amount: Int, val config: Map<String, Any>?)
 
 public class Config {
   companion object {
@@ -20,7 +20,8 @@ public class Config {
 
   public var name: String
   public var scenario: String
-  public var roles: MutableList<RoleConfig> = mutableListOf()
+
+  public var roles: MutableMap<String, RoleConfig> = mutableMapOf()
 
   public var dayLength: Int
   public var nightLength: Int
@@ -48,33 +49,33 @@ public class Config {
         debuglog("Config: Role $role does not exist")
         continue
       }
-      this.roles.add(
+      this.roles[role] =
           RoleConfig(
-              role,
               roleConfig.getInt("count"),
               roleConfig.getConfigurationSection("config")?.getValues(false) as? Map<String, Any>
           )
-      )
     }
 
     debuglog("Config: loaded $name")
   }
 
-  public fun getRoleCount(): Int {
-    var count = 0
-    for (role in this.roles) {
-      count += role.amount
+  val roleCount: Int
+    get() {
+      var count = 0
+      for (role in this.roles) {
+        count += role.value.amount
+      }
+      return count
     }
-    return count
-  }
 
-  public fun getRoleCounts(): Array<Int> {
-    val counts = Array(RoleObject.Type.values().size) { 0 }
-    for (role in this.roles) {
-      counts[Role.roles[role.name]?.type?.ordinal ?: 0] += role.amount
+  val roleCounts: Array<Int>
+    get() {
+      val counts = Array(RoleData.Type.values().size) { 0 }
+      for (role in this.roles) {
+        counts[Role.roles[role.key]!!.type.ordinal] += role.value.amount
+      }
+      return counts
     }
-    return counts
-  }
 
   public fun save() {}
 }

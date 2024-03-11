@@ -49,7 +49,7 @@ public class Player(playerEntity: Player, val role: Role) : User(playerEntity) {
   }
 }
 
-public class spectator(playerEntity: Player) : User(playerEntity) {
+public class Spectator(playerEntity: Player) : User(playerEntity) {
   override fun openBook() {
     TODO()
   }

@@ -3,27 +3,30 @@ package net.hareworks.werewolf
 import java.time.Duration
 import net.hareworks.werewolf.game.Config
 import net.hareworks.werewolf.game.Game
-import net.hareworks.werewolf.gui.book.RoomMenu
+import net.hareworks.werewolf.gui.SessionMenu
 import net.kyori.adventure.key.Key
 import net.kyori.adventure.sound.Sound
 import net.kyori.adventure.text.Component
 import net.kyori.adventure.title.Title
 import org.bukkit.entity.Player
 
-public class Room(creator: Player, name: String) : Broadcaster {
+public class Session(creator: Player, name: String) : Broadcaster {
   var roomname: String = name
   val config: Config = Config.default()
 
-  override val players: MutableList<Player> = mutableListOf(creator)
-  val gui: RoomMenu = RoomMenu(this)
+  val players: MutableList<Player> = mutableListOf(creator)
+  override val targets: List<Player>
+    get() = this.players.toList()
+
+  val gui: SessionMenu = SessionMenu(this)
   val inGame: Boolean
-    get() = this.Game != null
+    get() = this.game != null
   var isPrivate: Boolean = false
   val isFull
     get() = this.players.size >= capacity
   var capacity: Int = 8
 
-  var Game: Game? = null
+  var game: Game? = null
 
   public fun join(player: Player): Boolean {
     if (this.isFull) return false
@@ -37,7 +40,6 @@ public class Room(creator: Player, name: String) : Broadcaster {
   public fun leave(player: Player): Boolean {
     if (!this.players.contains(player)) return false
     this.players.remove(player)
-    logger().info("Room: $roomname ${this.players.toString()}")
     return true
   }
 
@@ -49,13 +51,16 @@ public class Room(creator: Player, name: String) : Broadcaster {
   }
 
   public fun start() {
-    if (this.config.getRoleCount() > this.players.size) {
-      broadcast(Lang.get("game.not-enough-players"))
+    if (this.inGame) {
+      broadcast(Lang.get("game.already-started"))
       return
     }
+    // if (this.players.size < 2) {
+    //   broadcast(Lang.get("game.not-enough-players"))
+    //   return
+    // }
     broadcast(Component.text(Lang.get("game.will-start-soon")))
-    MCWerewolf.instance.runTaskLater(90) {
-      broadcastSound(Sound.sound(Key.key("block.bell.use"), Sound.Source.MASTER, 0.6f, 0.55f))
+    MCWerewolf.instance.runTaskLater(10) {
       broadcastTitle(
           Title.title(
               Component.text("\uE000").font(Key.key("guitoolkit", "gui")),
@@ -68,20 +73,34 @@ public class Room(creator: Player, name: String) : Broadcaster {
           )
       )
     }
-    MCWerewolf.instance.runTaskLater(100) {
-      this.Game = Game(this)
-      this.Game?.start()
+    MCWerewolf.instance.runTaskLater(50) {
+      broadcastSound(Sound.sound(Key.key("block.bell.use"), Sound.Source.MASTER, 0.6f, 0.55f))
+      this.game = Game(this)
+      for (p in this.game!!.players) {
+        p.showTitle(
+            Title.title(
+                Component.text(Lang.get("game.started")),
+                Component.text(Lang.get("game.started-subtitle")),
+                Title.Times.times(
+                    Duration.ofMillis(500),
+                    Duration.ofMillis(1000),
+                    Duration.ofMillis(500)
+                )
+            )
+        )
+      }
     }
+    MCWerewolf.instance.runTaskLater(100) { this.game?.start() }
   }
 
-  fun forceend() {
-    this.Game?.forceend()
-    this.Game = null
+  fun forceEnd() {
+    this.game?.forceEnd()
+    this.game = null
   }
 
   public fun onPlayerDisconnect(player: Player) {
     if (this.inGame) {
-      this.Game?.onPlayerDisconnect(player)
+      this.game?.onPlayerDisconnect(player)
     }
   }
 
@@ -90,7 +109,7 @@ public class Room(creator: Player, name: String) : Broadcaster {
     players[i] = player
     if (this.inGame) {
       players[i].sendMessage(Lang.get("game.reconnected-to-in-progress"))
-      this.Game?.onPlayerReconnect(player)
+      this.game?.onPlayerReconnect(player)
     } else players[i].sendMessage(Lang.get("game.reconnected"))
   }
 

@@ -1,4 +1,4 @@
-package net.hareworks.werewolf.gui.book
+package net.hareworks.werewolf.gui
 
 import java.util.UUID
 import net.hareworks.guilib.*
@@ -9,9 +9,9 @@ import net.kyori.adventure.text.format.NamedTextColor
 import org.bukkit.entity.Player
 import org.w3c.dom.Element
 
-class GameMenu() : GUI {
+class MainMenu() : GUI {
   companion object {
-    val instances = HashMap<UUID, GameMenu>()
+    val instances = HashMap<UUID, MainMenu>()
   }
   val ui: net.hareworks.guilib.GUI =
       CUI(Vec2(-80, -40)) {
@@ -82,9 +82,9 @@ class GameMenu() : GUI {
                 )
                 .apply { width = 20 },
             Interactable(
-                    "New Room",
+                    "Start Session",
                     ActionElement({ player ->
-                      GameMenu.instances[player.uniqueId]?.ui?.forceQuit()
+                      MainMenu.instances[player.uniqueId]?.ui?.quit()
                       player.performCommand("ww create")
                       player.performCommand("ww menu")
                     })
@@ -95,16 +95,24 @@ class GameMenu() : GUI {
               width = 20
             },
             NewLine(),
-            Element("Rooms").apply { width = 20 },
+            Element("Sessions:").apply { width = 20 },
             NewLine(),
             *(MCWerewolf.instance
-                .rooms
+                .sessionList
                 .map {
                   Interactable(
-                          "",
-                          ActionElement({ player -> player.sendMessage("Join room") }).apply {
-                            component = Component.text(it.roomname)
-                          }
+                          it.roomname,
+                          ActionElement({ player ->
+                            MCWerewolf.instance.getRoom(player)?.let { room ->
+                              if (room.roomname == it.roomname) {
+                                player.sendMessage(Component.text("You are already in this room."))
+                                return@ActionElement
+                              }
+                              room.leave(player)
+                            }
+                            player.performCommand("ww join " + it.roomname)
+                            player.performCommand("ww menu")
+                          })
                       )
                       .apply { width = 20 }
                 }
@@ -112,7 +120,7 @@ class GameMenu() : GUI {
                 .run {
                   if (isEmpty())
                       arrayOf(
-                          Element("No rooms").apply {
+                          Element("No sessions").apply {
                             width = 20
                             position = CUIComponent.Position.CENTER
                           }

@@ -16,7 +16,7 @@ public class MCWerewolf : JavaPlugin() {
       private set
   }
   lateinit var kommand: KommandLib
-  public var rooms: MutableList<Room> = mutableListOf()
+  public var sessionList: MutableList<Session> = mutableListOf()
   public var defaultConfig: YamlConfiguration = YamlConfiguration()
   public var langConfig: YamlConfiguration = YamlConfiguration()
 
@@ -34,7 +34,7 @@ public class MCWerewolf : JavaPlugin() {
 
   override fun onDisable() {
     kommand.unregister()
-    rooms.forEach { it.forceend() }
+    sessionList.forEach { it.forceEnd() }
   }
 
   private fun InitConfig() {
@@ -65,25 +65,25 @@ public class MCWerewolf : JavaPlugin() {
 
   fun newRoom(player: Player, name: String): Boolean {
     if (getRoom(name) != null) return false
-    rooms.add(Room(player, name))
+    sessionList.add(Session(player, name))
     return true
   }
 
-  fun deleteRoom(room: Room) {
-    rooms.remove(room)
+  fun deleteRoom(room: Session) {
+    sessionList.remove(room)
   }
 
-  fun getRoom(name: String): Room? {
-    return this.rooms.find { room -> room.roomname == name }
+  fun getRoom(name: String): Session? {
+    return this.sessionList.find { room -> room.roomname == name }
   }
 
-  fun getRoom(player: Player): Room? {
-    return this.rooms.find { room -> room.players.contains(player) }
-        ?: this.rooms.find { it.players.find { it.player?.uniqueId == player.uniqueId } != null }
+  fun getRoom(player: Player): Session? {
+    return this.sessionList.find { room -> room.players.contains(player) }
+        ?: this.sessionList.find { it.players.find { it.player?.uniqueId == player.uniqueId } != null }
   }
 
   fun hasRoom(player: Player): Boolean {
-    return this.rooms.any { room -> room.players.contains(player) }
+    return this.sessionList.any { room -> room.players.contains(player) }
   }
 
   fun runTaskLater(ticks: Long, task: () -> Unit) {
@@ -92,25 +92,25 @@ public class MCWerewolf : JavaPlugin() {
 }
 
 abstract interface Broadcaster {
-  val players: List<Audience>
+  val targets: List<Audience>
 
   public fun broadcast(message: String) {
-    for (p in this.players) {
+    for (p in this.targets) {
       p.sendMessage(Component.text(message))
     }
   }
   public fun broadcast(message: Component) {
-    for (p in this.players) {
+    for (p in this.targets) {
       p.sendMessage(message)
     }
   }
   public fun broadcastTitle(title: Title) {
-    for (p in this.players) {
+    for (p in this.targets) {
       p.showTitle(title)
     }
   }
   public fun broadcastSound(sound: Sound) {
-    for (p in this.players) {
+    for (p in this.targets) {
       p.playSound(sound, Sound.Emitter.self())
     }
   }
